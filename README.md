@@ -1,0 +1,1 @@
+# go_di_template
