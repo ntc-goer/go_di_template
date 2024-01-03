@@ -3,25 +3,29 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"go_di_template/config"
+	"go_di_template/internal/middleware"
 	"go_di_template/internal/product"
 	"net/http"
 )
 
 type CoreHTTPServer struct {
 	*HTTPServer
-	Cors    *gin.HandlerFunc
-	Config  *config.Config
-	Product *product.Handler
+	Middleware *middleware.Middleware
+	Cors       *gin.HandlerFunc
+	Config     *config.Config
+	Product    *product.Handler
 }
 
 func NewCoreHTTPServer(httpServer *HTTPServer,
 	cors *gin.HandlerFunc,
 	pd *product.Handler,
+	mdw *middleware.Middleware,
 ) *CoreHTTPServer {
 	return &CoreHTTPServer{
 		HTTPServer: httpServer,
 		Cors:       cors,
 		Product:    pd,
+		Middleware: mdw,
 	}
 }
 
@@ -35,5 +39,5 @@ func (c *CoreHTTPServer) AddCoreRouter() {
 	v1 := c.Engine.Group("/v1")
 
 	// Sample
-	v1.GET("/product", c.Product.GetAll)
+	v1.GET("/product", c.Middleware.AuthMiddleware, c.Product.GetAll)
 }
