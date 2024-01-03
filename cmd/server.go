@@ -3,9 +3,11 @@ package cmd
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/dig"
+	"go_di_template/batch"
 	"go_di_template/config"
 	"go_di_template/internal/middleware"
 	"go_di_template/internal/product"
@@ -23,21 +25,10 @@ func serverCmd() *cobra.Command {
 			defer cancelFn()
 
 			container := provideCoreDependencies()
-			// Invoke API Server
-			err := container.Invoke(func(c *server.CoreHTTPServer) {
-				c.AddCoreRouter()
-				err := c.Start()
-				if err != nil {
-					return
-				}
-			})
-			if err != nil {
-				return err
-			}
 
 			// Invoke MongoDB Client -> Connect
 			var client *mongo.Client
-			err = container.Invoke(func(db *mongo.Database) {
+			err := container.Invoke(func(db *mongo.Database) {
 				client = db.Client()
 			})
 			if err != nil {
@@ -48,6 +39,26 @@ func serverCmd() *cobra.Command {
 					panic(err)
 				}
 			}()
+
+			// TODO Consider Invoke by Server Command or other CLI Command
+			err = container.Invoke(func(batch *batch.Batch) {
+				batch.Init()
+			})
+			if err != nil {
+				return err
+			}
+
+			// Invoke API Server
+			err = container.Invoke(func(c *server.CoreHTTPServer) {
+				c.AddCoreRouter()
+				err := c.Start()
+				if err != nil {
+					logrus.Errorf("Start server error %s", err.Error())
+				}
+			})
+			if err != nil {
+				return err
+			}
 			return nil
 		},
 	}
@@ -67,6 +78,7 @@ func provideCoreDependencies() *dig.Container {
 		return cfg
 	})
 	// Package configuration
+	c.Provide(batch.NewBatch)
 	c.Provide(middleware.NewMiddleware)
 	c.Provide(database.NewMongoDB)
 	c.Provide(InitMongoDB)
