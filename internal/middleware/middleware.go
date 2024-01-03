@@ -16,6 +16,6 @@ func NewMiddleware(c *config.Config) *Middleware {
 }
 
 func (mdw *Middleware) AuthMiddleware(ctx *gin.Context) {
-	//TODO implement me
+	// TODO implement me
 	ctx.Next()
 }

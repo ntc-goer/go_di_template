@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -20,6 +21,7 @@ func NewHTTPServer(engine *gin.Engine) *HTTPServer {
 
 func (h *HTTPServer) Start() error {
 	if err := h.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		logrus.Errorf("ListenAndServe fail %s", err)
 		return err
 	}
 	return nil
