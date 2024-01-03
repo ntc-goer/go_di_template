@@ -1,0 +1,16 @@
+mongodb:
+  host: 127.0.0.1:27017
+  database: di_db
+  username: di_admin
+  password: di_admin_pwd
+
+cors:
+  allow_origins:
+    - 'https://dev.app'
+  allow_methods:
+    - PUT
+    - PATCH
+    - GET
+    - POST
+    - DELETE
+    - OPTIONS
