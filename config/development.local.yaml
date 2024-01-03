@@ -4,6 +4,12 @@ mongodb:
   username: di_admin
   password: di_admin_pwd
 
+ftp:
+  server: localhost
+  port: 21
+  user_name: admin
+  password: Abc12345
+
 cors:
   allow_origins:
     - 'http://localhost:3000'

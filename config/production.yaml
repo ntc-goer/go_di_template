@@ -4,6 +4,12 @@ mongodb:
   username: di_admin
   password: di_admin_pwd
 
+ftp:
+  server: jpro2.jpo.or.jp
+  port: 21
+  user_name: vj_kinkan@receive
+  password: 03-3294-7652
+
 cors:
   allow_origins:
     - 'https://prod.app'

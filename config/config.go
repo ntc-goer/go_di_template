@@ -30,9 +30,16 @@ type Cors struct {
 	AllowMethods []string `json:"allow_methods"`
 }
 
+type FTP struct {
+	Server   string `json:"server"`
+	Port     int    `json:"port"`
+	UserName string `json:"user_name"`
+	Password string `json:"password"`
+}
 type Config struct {
 	MongoDB MongoDB `json:"mongodb"`
 	Cors    Cors    `json:"cors"`
+	FTP     FTP     `json:"ftp"`
 }
 
 func NewCors(c *Config) *gin.HandlerFunc {
