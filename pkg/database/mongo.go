@@ -6,7 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go_di_template/config"
 	"golang.org/x/net/context"
-	"os"
 	"time"
 )
 
@@ -35,12 +34,8 @@ func NewMongoDB(c *config.Config) *MongoDB {
 
 func (m *MongoDB) Connect() (*mongo.Client, error) {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	connectionStr := connectionStringTemplate
 
-	env := os.Getenv("APP_ENV")
-	connectionStr := connectionStringSrvTemplate
-	if env == "development.local" {
-		connectionStr = connectionStringTemplate
-	}
 	uri := fmt.Sprintf(connectionStr, m.Username, m.Password, m.Hosts[0], m.Database)
 	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
